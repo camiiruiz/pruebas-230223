@@ -11,7 +11,7 @@ const videoConstraints: any = {
   sampleSize: 10,
   facingMode: "environment",
   zoom: 4,
-  focusDistance: 0.1,
+  //focusDistance: 0.1,
 };
 
 const screenshotDimensions: any = {
