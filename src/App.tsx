@@ -14,12 +14,8 @@ const videoConstraints: any = {
   //focusDistance: 0.1,
 };
 
-const screenshotDimensions: any = {
-  width: 30,
-  height: 30,
-}
-
 function App() {
+  const refresh = () => window.location.reload();
   const webcamRef: any = React.useRef(null);
   const imgRef: any = React.useRef(null);
   const inRef: any = React.useRef(null);
@@ -28,21 +24,18 @@ function App() {
   const [detectedPixels, setDetectedPixels] = useState(0);
   const [time, setTime] = useState(0);
   let prendido :boolean = false;
-  const alfa :number = 20000;
-  const beta :number = 5000;
+  const alfa :number = 15000;
+  const beta :number = 1000;
   const [cantidad_de_corte, setCantidad_de_corte] = useState(-1);
-  //let cantidad_de_corte :number;
   const [tiempo_init, setTiempo_init] = useState(-1);
-  //let tiempo_init :any = -1;
   const [tiempo_end, setTiempo_end] = useState(-1);
-  //let tiempo_end :any = -1;
   const [TRC, setTRC] = useState(-1);
   const [entroAlfa,setEntroAlfa]=useState(false);
-  //let TRC :any = -1;
   //Aca podes comentar para que apareca o no
   let DEBUG=true;
   let [resultado,setResultado] = useState(0);
   let [torchonoff,setTorch] = useState(false);
+  // let [dorefresh,setRefresh] = useState(false);
 
   useEffect(() => {
     if(DEBUG)console.log( `START- ######## [${torchonoff},     ${detectedPixels},   ${alfa},  ${beta},   ${tiempo_init},   ${tiempo_end}]`);
@@ -99,7 +92,6 @@ function App() {
   }, [resultado, detectedPixels]);
 
   useEffect(() => {
-    
     const process = async () => {
       //debugger;
       const imageSrc = webcamRef?.current?.getScreenshot();
@@ -107,15 +99,14 @@ function App() {
         let track = webcamRef?.current?.stream.getVideoTracks()[0];
         const capa = track.getCapabilities();
         const settings = track.getSettings();  
-        console.log(capa);
-        console.log(settings);
+        // console.log(capa);
+        // console.log(settings);
         if (!('zoom' in settings)) {
           return Promise.reject('Zoom is not supported by ' + track.label);
         }
         track.applyConstraints({
           advanced: [
             {torch: torchonoff},
-            {zoom: 4}
           ]
         });
       }
@@ -123,21 +114,24 @@ function App() {
       if (!imageSrc) return;
 
       return new Promise((resolve: any) => {
-       
+      
         imgRef.current.src = imageSrc;
         imgRef.current.onload = () => {
           try {
             const img = cv.imread(imgRef.current);
             const proccessedData = processImage(img);
-            setDetectedPixels(proccessedData.detectedPixels);
-            cv.imshow(inRef.current, proccessedData.image);
-            cv.imshow(outRef.current, proccessedData.croppedImage);
-            console.log(proccessedData.detectedPixels);
+            if (torchonoff) {
+              setDetectedPixels(proccessedData.detectedPixels);
+              cv.imshow(inRef.current, proccessedData.image);
+            } else {
+            cv.imshow(inRef.current, proccessedData.croppedImage);
+            }
             img.delete();
-           
+
           resolve();
           } catch (error) {
             console.log(error);
+            refresh();
             resolve();
           }
         };
@@ -155,7 +149,6 @@ function App() {
     return () => {
       cancelAnimationFrame(handle);
     };
-
   });
 
   const startTimer = () => {
@@ -229,8 +222,8 @@ function App() {
         <canvas
           ref={inRef}
           style={{
-            width: 200,
-            height: 200,
+            width: 300,
+            height: 300,
           }}
         />
         {/* <canvas
