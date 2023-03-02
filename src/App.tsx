@@ -3,7 +3,7 @@ import Webcam from "react-webcam";
 import cv from "@techstark/opencv-js";
 
 import "./App.css";
-import { processImage,isCanvasBlank } from "./imageProcessing";
+import { processImage } from "./imageProcessing";
 
 const videoConstraints: any = {
   width: 200,
@@ -15,15 +15,12 @@ const videoConstraints: any = {
 };
 
 function App() {
-  const refresh = () => window.location.reload();
+  // const refresh = () => window.location.reload();
   const webcamRef: any = React.useRef(null);
   const imgRef: any = React.useRef(null);
   const inRef: any = React.useRef(null);
-  const outRef: any = React.useRef(null);
-  const [isActive, setIsActive] = useState(false);
   const [detectedPixels, setDetectedPixels] = useState(0);
   const [time, setTime] = useState(0);
-  let prendido :boolean = false;
   const alfa :number = 15000;
   const beta :number = 1000;
   const [cantidad_de_corte, setCantidad_de_corte] = useState(-1);
@@ -35,19 +32,16 @@ function App() {
   let DEBUG=true;
   let [resultado,setResultado] = useState(0);
   let [torchonoff,setTorch] = useState(false);
-  // let [dorefresh,setRefresh] = useState(false);
 
   useEffect(() => {
-    if(DEBUG)console.log( `START- ######## [${torchonoff},     ${detectedPixels},   ${alfa},  ${beta},   ${tiempo_init},   ${tiempo_end}]`);
-    if (TRC>-1){
-      let nueva=(Date.now()-TRC);
-      if(DEBUG)console.log( "tiempo trans ="+nueva);
-    }else{
-      if(DEBUG)console.log( "tiempo tasn = 0");
-    }
-    setTRC(Date.now());
-    //TRC =Date.now();
-
+    // if(DEBUG)console.log( `START- ######## [${torchonoff},     ${detectedPixels},   ${alfa},  ${beta},   ${tiempo_init},   ${tiempo_end}]`);
+    // if (TRC>-1){
+    //   let nueva=(Date.now()-TRC);
+    //   if(DEBUG)console.log( "tiempo trans ="+nueva);
+    // }else{
+    //   if(DEBUG)console.log( "tiempo tasn = 0");
+    // }
+    // setTRC(Date.now());
     
     if (detectedPixels > alfa){
       //Aca estoy apretado
@@ -131,7 +125,7 @@ function App() {
           resolve();
           } catch (error) {
             console.log(error);
-            refresh();
+            // refresh();
             resolve();
           }
         };
@@ -150,19 +144,6 @@ function App() {
       cancelAnimationFrame(handle);
     };
   });
-
-  const startTimer = () => {
-    setIsActive((value) => !value);
-  };
-
-  const stopTimer = () => {
-    setIsActive(false);
-  };
-
-  const resetTimer = () => {
-    setIsActive(false);
-    setTime(0);
-  };
 
   const onloadWebCam=()=>{
     debugger;
