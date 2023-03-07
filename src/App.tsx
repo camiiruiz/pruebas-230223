@@ -121,7 +121,6 @@ function App() {
             cv.imshow(inRef.current, proccessedData.croppedImage);
             }
             img.delete();
-
           resolve();
           } catch (error) {
             console.log(error);
@@ -129,6 +128,7 @@ function App() {
             resolve();
           }
         };
+
       });
     };
 
